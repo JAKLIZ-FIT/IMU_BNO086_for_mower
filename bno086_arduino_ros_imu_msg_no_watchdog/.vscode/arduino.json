@@ -1,0 +1,6 @@
+{
+    "port": "/dev/ttyACM1",
+    "board": "arduino:samd:nano_33_iot",
+    "programmer": "arduino:atmel_ice",
+    "sketch": "bno086_arduino_ros_imu_msg.ino"
+}
