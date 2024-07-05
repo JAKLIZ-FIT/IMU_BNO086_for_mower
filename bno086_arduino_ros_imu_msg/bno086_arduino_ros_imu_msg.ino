@@ -81,7 +81,7 @@ bool received_a = false;
 bool received_g = false;
 
 int inactive_counter = 0;
-
+int unsuccessful_connect_counter = 0;
 
 unsigned long previousDebugMillis = 0;
 #define DEBUG_INTERVAL_MILLISECONDS 50
@@ -144,8 +144,13 @@ void setup() {
     //while (1)
     //  ;
     delay(50);
-
+    unsuccessful_connect_counter++;
+    if (unsuccessful_connect_counter > 3){
+      NVIC_SystemReset();
+    }
     myResetIMU();
+    Serial.println("tried to reset the IMU");
+    delay(500); // TODO remove
   }
   Serial.println("BNO08x found!");
 
