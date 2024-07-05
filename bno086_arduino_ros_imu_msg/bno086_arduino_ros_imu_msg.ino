@@ -90,6 +90,10 @@ unsigned long previousBlinkMillis = 0;
 #define BLINK_INTERVAL_MILLISECONDS 500
 bool ledPinIsHigh = false;
 
+// message checksum
+int checksum = 0;
+String message;
+
 // basically the same as the code from the library
 // for hard reset
 void myResetIMU()
@@ -321,42 +325,34 @@ void loop() {
     {      
       previousDebugMillis = millis();
       
-      Serial.print(quatI, 2);
-      Serial.print(F(","));
-      Serial.print(quatJ, 2);
-      Serial.print(F(","));
-      Serial.print(quatK, 2);
-      Serial.print(F(","));
-      Serial.print(quatReal, 2);
-      Serial.print(F(","));
-      Serial.print(quatRadianAccuracy, 2);
+      message = String(quatI,4) + ","
+              + String(quatJ,4) + ","
+              + String(quatK,4) + ","
+              + String(quatReal,4) + ","
+              + String(quatRadianAccuracy,4) + ",";
     
-      Serial.print(",0.00,0.00,0.00,0");//Serial.print(F(",")); 
-      //Serial.print(lax, 2);
-      //Serial.print(F(","));
-      //Serial.print(lay, 2);
-      //Serial.print(F(","));
-      //Serial.print(laz, 2);
-      //Serial.print(F(","));
-      //Serial.print(linAccuracy);
-    
-      Serial.print(F(","));
-      Serial.print(gx, 2);
-      Serial.print(F(","));
-      Serial.print(gy, 2);
-      Serial.print(F(","));
-      Serial.print(gz, 2);
+      message += "0.0,0.0,0.0,0,";
+      // message += String(lax,4) + ","
+      //         + String(lay,4) + ","
+      //         + String(laz,4) + ","
+      //         + String(linAccuracy) + ",";
       
-      //Serial.println();
-      Serial.print(F(","));
+      message += String(gx,4) + ","
+              + String (gy,4) + ","
+              + String (gz,4) + ",";
+      
+      message += String(received_q)
+              + String(received_a)
+              + String(received_g)
+              + ","
+              + String(timeSinceLastSerialPrint);
 
-      Serial.print(received_q);
-      Serial.print(received_a);
-      Serial.print(received_g);
-      Serial.print(F(","));
-      Serial.print(timeSinceLastSerialPrint);
-      
-      Serial.println();
+      checksum = 0;
+      for (char c : message){
+        checksum += c;
+      }
+      message += " " + String(checksum);
+      Serial.println(message);
       
       received_q = false;
       received_a = false;
